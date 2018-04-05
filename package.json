@@ -1,0 +1,23 @@
+{
+  "name": "boilerplate-express-massive-postgres",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pvjones/boilerplate-express-massive-postgres.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pvjones/boilerplate-express-massive-postgres/issues"
+  },
+  "homepage": "https://github.com/pvjones/boilerplate-express-massive-postgres#readme",
+  "dependencies": {
+    "express": "~4.16.0",
+    "massive": "~4.7.0"
+  }
+}
