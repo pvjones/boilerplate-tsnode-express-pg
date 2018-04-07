@@ -1,6 +1,6 @@
 import { Response, NextFunction, ErrorRequestHandler } from 'express'
 
-export const promiseHandler = (promise: Promise<any>, res: Response, next: NextFunction) => {
+export const promiseHandler = (promise: Promise<any>, res: Response, next: NextFunction): void => {
   Promise.resolve(promise)
     .then((data: any) => {
       data
@@ -14,3 +14,4 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error(err.message)
   res.json({ message: err.message })
 }
+
