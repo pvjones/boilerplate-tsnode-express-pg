@@ -2,7 +2,8 @@ import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as path from 'path'
 import * as fs from 'fs'
-import routes from './endpoints/routeControllers'
+import routes from './endpoints/routes'
+import { errorHandler } from './utils/expressHelpers'
 
 const cors = require('cors')
 
@@ -36,10 +37,22 @@ const registerEndpoints = (app: express.Application): express.Application => {
   return app
 }
 
+const handleErrors = (app: express.Application): express.Application => {
+  app.use((req, res, next) => {
+    // No endpoint routes were matched
+    throw Error('not found')
+  })
+
+  app.use(errorHandler)
+
+  return app
+}
+
 const start = (): express.Application => {
   let server = createServer()
   server = configure(server)
   server = registerEndpoints(server)
+  server = handleErrors(server)
 
   server.listen(3000, () => {
     console.log('Api is listening on port 3000')
