@@ -9,22 +9,24 @@ const cors = require('cors')
 
 const createServer: AppGenerator = () => express()
 
-const configure: AppModifier = app => {
+const configureApp: AppModifier = app => {
   const bodyLimit = { limit: '5mb' }
 
   app.use(bodyParser.json({
     ...bodyLimit,
   }))
+
   app.use(bodyParser.urlencoded({
     extended: true,
     ...bodyLimit,
   }))
+
   app.use(cors())
 
   return app
 }
 
-const registerEndpoints: AppModifier = app => {
+const registerRoutes: AppModifier = app => {
   routes(app)
 
   app.use(express.static(path.join(__dirname, 'static')))
@@ -32,6 +34,17 @@ const registerEndpoints: AppModifier = app => {
   app.get(/^(?!\/api\/)(.*)$/, (req, res, next) => {
     const filePath = path.resolve(__dirname, 'static', 'index.html')
     res.sendFile(filePath)
+  })
+
+  return app
+}
+
+const injectUtils: AppModifier = app => {
+  const utils = getUtils()
+
+  app.use((req: AppRequest, res, next) => {
+    req.utils = utils
+    next()
   })
 
   return app
@@ -50,8 +63,9 @@ const handleErrors: AppModifier = app => {
 
 const start: AppGenerator = () => {
   let server = createServer()
-  server = configure(server)
-  server = registerEndpoints(server)
+  server = configureApp(server)
+  server = injectUtils(server)
+  server = registerRoutes(server)
   server = handleErrors(server)
 
   server.listen(3000, () => {
@@ -65,3 +79,9 @@ start()
 
 type AppModifier = (app: express.Application) => express.Application
 type AppGenerator = () => express.Application
+interface RequestUtils {
+  db: any
+}
+interface AppRequest extends express.Request {
+  utils: RequestUtils
+}
