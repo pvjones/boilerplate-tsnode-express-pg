@@ -5,8 +5,7 @@ import * as controllers from '../controllers/users.controller'
 const routes = (app: Application): void => {
 
   app.get('/api/users', requestHandler(controllers.getUser))
-
-  app.get('api/user/:id', requestHandler(controllers.getUser))
+  app.get('/api/user/:id', requestHandler(controllers.getUser))
 
 }
 

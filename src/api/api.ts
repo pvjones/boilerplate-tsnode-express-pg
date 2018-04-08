@@ -6,9 +6,9 @@ import { errorHandler } from './utils/expressHelpers'
 
 const cors = require('cors')
 
-const createServer = (): express.Application => express()
+const createServer: AppGenerator = () => express()
 
-const configure = (app: express.Application): express.Application => {
+const configure: AppModifier = app => {
   const bodyLimit = { limit: '5mb' }
 
   app.use(bodyParser.json({
@@ -23,7 +23,7 @@ const configure = (app: express.Application): express.Application => {
   return app
 }
 
-const registerEndpoints = (app: express.Application): express.Application => {
+const registerEndpoints: AppModifier = app => {
   routes(app)
 
   app.use(express.static(path.join(__dirname, 'static')))
@@ -36,7 +36,7 @@ const registerEndpoints = (app: express.Application): express.Application => {
   return app
 }
 
-const handleErrors = (app: express.Application): express.Application => {
+const handleErrors: AppModifier = app => {
   app.use((req, res, next) => {
     // No endpoint routes were matched
     throw Error('not found')
@@ -47,7 +47,7 @@ const handleErrors = (app: express.Application): express.Application => {
   return app
 }
 
-const start = (): express.Application => {
+const start: AppGenerator = () => {
   let server = createServer()
   server = configure(server)
   server = registerEndpoints(server)
@@ -61,3 +61,6 @@ const start = (): express.Application => {
 }
 
 start()
+
+type AppModifier = (app: express.Application) => express.Application
+type AppGenerator = () => express.Application

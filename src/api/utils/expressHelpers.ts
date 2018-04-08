@@ -5,7 +5,7 @@ import {
   RequestHandler,
 } from 'express'
 
-export const promiseHandler = (promise: Promise<any>, res: Response, next: NextFunction): void => {
+export const promiseHandler: PromiseHandler = (promise, res, next) => {
   Promise.resolve(promise)
     .then((data: any) => {
       data
@@ -25,3 +25,5 @@ export const requestHandler = (controller: any): RequestHandler =>
     const promise = controller(req)
     promiseHandler(promise, res, next)
   }
+
+type PromiseHandler = (promise: Promise<any>, res: Response, next: NextFunction) => void
