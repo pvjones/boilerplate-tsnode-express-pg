@@ -1,0 +1,125 @@
+{
+  "extends": [
+    "tslint-eslint-rules",
+    "tslint-config-airbnb",
+    "tslint:latest",
+    "tslint-react"
+  ],
+  "compilerOptions": {
+    "lib": [
+      "ES2017"
+    ]
+  },
+  "rules": {
+    "import-name": false,
+    "align": [
+      true,
+      "members",
+      "parameters",
+      "statements"
+    ],
+    "no-constant-condition": true,
+    "interface-name": false,
+    "indent": [
+      true,
+      "spaces",
+      2
+    ],
+    "max-line-length": [
+      true,
+      170
+    ],
+    "no-unused-variable": true,
+    "no-namespace": false,
+    "member-access": [
+      false
+    ],
+    "linebreak-style": false,
+    "jsx-quotes": false,
+    "quotemark": [
+      true,
+      "warning",
+      "single",
+      "avoid-escape",
+      "avoid-template"
+    ],
+    "no-use-before-define": false,
+    "padded-blocks": false,
+    "no-param-reassign": false,
+    "semicolon": [
+      true,
+      "never"
+    ],
+    "no-empty-interface": false,
+    "comment-format": [
+      true,
+      "check-space"
+    ],
+    "no-plusplus": [
+      "error",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
+    "arrow-parens": false,
+    "import/no-extraneous-dependencies": "warn",
+    "import/first": "warn",
+    "ordered-imports": [
+      true,
+      {
+        "grouped-imports": true,
+        "import-sources-order": "any",
+        "named-imports-order": "any",
+        "module-source-path": "root"
+      }
+    ],
+    "no-var-requires": false,
+    "no-string-literal": false,
+    "object-literal-sort-keys": false,
+    "object-literal-key-quotes": false,
+    "no-submodule-imports": false,
+    "spaced-comment": true,
+    "no-unneeded-ternary": "warn",
+    "arrow-body-style": [
+      "warn",
+      "as-needed"
+    ],
+    "no-trailing-spaces": "warn",
+    "curly": false,
+    "no-console": [
+      true,
+      "log"
+    ],
+    "no-magic-numbers": false,
+    "newline-before-return": false,
+    "valid-jsdoc": false,
+    "no-bitwise": false,
+    "ter-arrow-parens": false,
+    "array-type": [
+      true,
+      "array"
+    ],
+    "max-classes-per-file": false,
+    "jsx-wrap-multiline": true,
+    "jsx-self-close": true,
+    "jsx-curly-spacing": true,
+    "jsx-alignment": true,
+    "jsx-boolean-value": false,
+    "jsx-no-multiline-js": false,
+    "jsx-no-lambda": false,
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "always",
+        "singleline": "never"
+      }
+    ],
+    "space-before-function-paren": false,
+    "ter-indent": false,
+    "variable-name": [
+      true,
+      "allow-leading-underscore",
+      "allow-pascal-case"
+    ]
+  }
+}

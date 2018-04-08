@@ -1,4 +1,9 @@
-import { Response, NextFunction, ErrorRequestHandler } from 'express'
+import {
+  Response,
+  NextFunction,
+  ErrorRequestHandler,
+  RequestHandler,
+} from 'express'
 
 export const promiseHandler = (promise: Promise<any>, res: Response, next: NextFunction): void => {
   Promise.resolve(promise)
@@ -15,3 +20,8 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   res.json({ message: err.message })
 }
 
+export const requestHandler = (controller: any): RequestHandler =>
+  (req, res, next) => {
+    const promise = controller(req)
+    promiseHandler(promise, res, next)
+  }
