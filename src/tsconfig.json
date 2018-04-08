@@ -6,7 +6,7 @@
     "sourceMap": true,
     "outDir": "../dist",
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // "noUnusedParameters": true,
   },
   "include": [
     "./**/*.ts"
