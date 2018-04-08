@@ -3,7 +3,6 @@
     "tslint-eslint-rules",
     "tslint-config-airbnb",
     "tslint:latest",
-    "tslint-react"
   ],
   "compilerOptions": {
     "lib": [
@@ -30,12 +29,10 @@
       170
     ],
     "no-unused-variable": true,
-    "no-namespace": false,
     "member-access": [
       false
     ],
     "linebreak-style": false,
-    "jsx-quotes": false,
     "quotemark": [
       true,
       "warning",
@@ -99,14 +96,6 @@
       true,
       "array"
     ],
-    "max-classes-per-file": false,
-    "jsx-wrap-multiline": true,
-    "jsx-self-close": true,
-    "jsx-curly-spacing": true,
-    "jsx-alignment": true,
-    "jsx-boolean-value": false,
-    "jsx-no-multiline-js": false,
-    "jsx-no-lambda": false,
     "trailing-comma": [
       true,
       {
@@ -114,7 +103,6 @@
         "singleline": "never"
       }
     ],
-    "space-before-function-paren": false,
     "ter-indent": false,
     "variable-name": [
       true,
