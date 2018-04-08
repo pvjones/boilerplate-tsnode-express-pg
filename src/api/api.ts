@@ -1,5 +1,6 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
+import * as massive from 'massive'
 import * as path from 'path'
 import routes from './endpoints/routes'
 import { errorHandler } from './utils/expressHelpers'
