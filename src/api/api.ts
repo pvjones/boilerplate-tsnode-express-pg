@@ -1,9 +1,9 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
-import * as pgp from 'pg-promise'
 import * as path from 'path'
 import routes from './endpoints/routes'
 import { handleError, buildUtils } from './utils/expressHelpers'
+import { Db } from '../db/db'
 
 const cors = require('cors')
 
@@ -40,7 +40,7 @@ const registerRoutes: AppModifier = app => {
 }
 
 const injectUtils: AppModifier = app => {
-  const utils = buildUtils('foo')
+  const utils = buildUtils()
 
   app.use((req: AppRequest, res, next) => {
     req.utils = utils
@@ -80,8 +80,8 @@ start()
 type AppModifier = (app: express.Application) => express.Application
 type AppGenerator = () => express.Application
 interface RequestUtils {
-  db: any
+  db: Db
 }
-interface AppRequest extends express.Request {
+export interface AppRequest extends express.Request {
   utils: RequestUtils
 }

@@ -4,6 +4,7 @@ import {
   ErrorRequestHandler,
   RequestHandler,
 } from 'express'
+import getDb, { Db } from '../../db/db'
 
 export const handlePromise: HandlePromise = (promise, res, next) => {
   Promise.resolve(promise)
@@ -26,10 +27,7 @@ export const handleRequest = (controller: any): RequestHandler =>
     handlePromise(promise, res, next)
   }
 
-export const buildUtils = (db: any) => {
-
-  return { db }
-}
+export const buildUtils = (): { db: Db } => ({ db: getDb() })
 
 
 type HandlePromise = (promise: Promise<any>, res: Response, next: NextFunction) => void
