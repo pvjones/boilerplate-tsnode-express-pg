@@ -5,7 +5,7 @@ import {
   RequestHandler,
 } from 'express'
 
-export const promiseHandler: PromiseHandler = (promise, res, next) => {
+export const handlePromise: HandlePromise = (promise, res, next) => {
   Promise.resolve(promise)
     .then((data: any) => {
       data
@@ -15,15 +15,21 @@ export const promiseHandler: PromiseHandler = (promise, res, next) => {
     .catch((error: Error) => next(error))
 }
 
-export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+export const handleError: ErrorRequestHandler = (err, req, res, next) => {
   console.error(err.message)
   res.json({ message: err.message })
 }
 
-export const requestHandler = (controller: any): RequestHandler =>
+export const handleRequest = (controller: any): RequestHandler =>
   (req, res, next) => {
     const promise = controller(req)
-    promiseHandler(promise, res, next)
+    handlePromise(promise, res, next)
   }
 
-type PromiseHandler = (promise: Promise<any>, res: Response, next: NextFunction) => void
+export const buildUtils = (db: any) => {
+
+  return { db }
+}
+
+
+type HandlePromise = (promise: Promise<any>, res: Response, next: NextFunction) => void

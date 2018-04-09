@@ -1,9 +1,9 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
-import * as massive from 'massive'
+import * as pgp from 'pg-promise'
 import * as path from 'path'
 import routes from './endpoints/routes'
-import { errorHandler } from './utils/expressHelpers'
+import { handleError, buildUtils } from './utils/expressHelpers'
 
 const cors = require('cors')
 
@@ -40,7 +40,7 @@ const registerRoutes: AppModifier = app => {
 }
 
 const injectUtils: AppModifier = app => {
-  const utils = getUtils()
+  const utils = buildUtils('foo')
 
   app.use((req: AppRequest, res, next) => {
     req.utils = utils
@@ -56,7 +56,7 @@ const handleErrors: AppModifier = app => {
     throw Error('not found')
   })
 
-  app.use(errorHandler)
+  app.use(handleError)
 
   return app
 }
