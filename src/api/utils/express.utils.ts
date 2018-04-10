@@ -1,10 +1,10 @@
+import getDb from '../../db/db'
 import {
-  Response,
-  NextFunction,
+  HandlePromise,
   ErrorRequestHandler,
   RequestHandler,
-} from 'express'
-import getDb, { Db } from '../../db/db'
+  Db,
+} from '../models'
 
 export const handlePromise: HandlePromise = (promise, res, next) => {
   Promise.resolve(promise)
@@ -21,6 +21,10 @@ export const handleError: ErrorRequestHandler = (err, req, res, next) => {
   res.json({ message: err.message })
 }
 
+export const handleAuth: RequestHandler = async (req, res, next) => {
+
+}
+
 export const handleRequest = (controller: any): RequestHandler =>
   (req, res, next) => {
     const promise = controller(req)
@@ -28,6 +32,3 @@ export const handleRequest = (controller: any): RequestHandler =>
   }
 
 export const buildUtils = (): { db: Db } => ({ db: getDb() })
-
-
-type HandlePromise = (promise: Promise<any>, res: Response, next: NextFunction) => void

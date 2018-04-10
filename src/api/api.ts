@@ -2,8 +2,8 @@ import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as path from 'path'
 import routes from './endpoints/routes'
-import { handleError, buildUtils } from './utils/expressHelpers'
-import { Db } from '../db/db'
+import { handleError, buildUtils } from './utils/express.utils'
+import { AppGenerator, AppModifier, AppRequest } from './models'
 
 const cors = require('cors')
 
@@ -27,14 +27,8 @@ const configureApp: AppModifier = app => {
 }
 
 const registerRoutes: AppModifier = app => {
+  app.use(express.static(path.join(__dirname, 'public')))
   routes(app)
-
-  app.use(express.static(path.join(__dirname, 'static')))
-
-  app.get(/^(?!\/api\/)(.*)$/, (req, res, next) => {
-    const filePath = path.resolve(__dirname, 'static', 'index.html')
-    res.sendFile(filePath)
-  })
 
   return app
 }
@@ -76,12 +70,3 @@ const start: AppGenerator = () => {
 }
 
 start()
-
-type AppModifier = (app: express.Application) => express.Application
-type AppGenerator = () => express.Application
-interface RequestUtils {
-  db: Db
-}
-export interface AppRequest extends express.Request {
-  utils: RequestUtils
-}

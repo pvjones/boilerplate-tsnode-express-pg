@@ -1,5 +1,5 @@
-import { Application } from 'express'
-import { handleRequest } from '../../utils/expressHelpers'
+import { Application } from '../../models'
+import { handleRequest } from '../../utils/express.utils'
 import * as controllers from '../controllers/users.controller'
 
 const routes = (app: Application): void => {

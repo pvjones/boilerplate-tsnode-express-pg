@@ -1,4 +1,4 @@
-import { TQuery } from 'pg-promise'
+import { QueryObj } from '../../models'
 
 export const getAllUsers = (): QueryObj => {
   const sql = `
@@ -62,7 +62,7 @@ export const createUser = (email: string, meta: any, username: string, firstName
         $/meta/,
         $/username/,
         $/firstName/,
-        $/lastName/,
+        $/lastName/
       )
       RETURNING 
         id
@@ -80,10 +80,4 @@ export const deleteUser = (userId: number): QueryObj => {
   const values = { userId }
 
   return { sql, values }
-}
-
-type QueryValues = (string | number)[] | Record<string, (string | number)>
-interface QueryObj {
-  sql: TQuery
-  values?: QueryValues
 }

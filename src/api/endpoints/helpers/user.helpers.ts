@@ -1,15 +1,16 @@
-import { AppRequest } from '../../api'
-import * as queries from '../sql/users.sql'
+import { AppRequest } from '../../models'
+import * as sql from '../sql/users.sql'
 
-export const getAllUsers = async <R>(request: AppRequest): Promise<R[]> => {
-  const get = queries.getAllUsers()
+export const getAllUsers = <R>(request: AppRequest): Promise<R[]> => {
+  const get = sql.getAllUsers()
   return request.utils.db.many<R>(
     get.sql,
   )
 }
 
-export const getUser = async <R>(request: AppRequest, userId: number): Promise<R> => {
-  const get = queries.getUser(userId)
+export const getUser = <R>(request: AppRequest, userId: number): Promise<R> => {
+  console.log('userId', userId)
+  const get = sql.getUser(userId)
   return request.utils.db.one<R>(
     get.sql,
     get.values,
@@ -17,35 +18,29 @@ export const getUser = async <R>(request: AppRequest, userId: number): Promise<R
 }
 
 export const updateUser = async <R>(request: AppRequest, userId: number, username: string, firstName: string, lastName: string): Promise<R> => {
-  const update = queries.updateUser(userId, firstName, lastName, username)
-  const updated = await request.utils.db.one<number>(
+  const update = sql.updateUser(userId, firstName, lastName, username)
+  const updatedId = await request.utils.db.one<number>(
     update.sql,
     update.values,
+    u => u.id,
   )
 
-  const get = queries.getUser(updated)
-  return request.utils.db.one<R>(
-    get.sql,
-    get.values,
-  )
+  return getUser<R>(request, updatedId)
 }
 
 export const createUser = async <R>(request: AppRequest, email: string, meta: any, username: string, firstName: string, lastName: string): Promise<R> => {
-  const create = queries.createUser(email, meta, username, firstName, lastName)
-  const created = await request.utils.db.one<number>(
+  const create = sql.createUser(email, meta, username, firstName, lastName)
+  const createdId = await request.utils.db.one<number>(
     create.sql,
     create.values,
+    u => u.id,
   )
 
-  const get = queries.getUser(created)
-  return request.utils.db.one<R>(
-    get.sql,
-    get.values,
-  )
+  return getUser<R>(request, createdId)
 }
 
 export const deleteUser = async (request: AppRequest, userId: number) => {
-  const del = queries.deleteUser(userId)
+  const del = sql.deleteUser(userId)
   return request.utils.db.none(
     del.sql,
     del.values,

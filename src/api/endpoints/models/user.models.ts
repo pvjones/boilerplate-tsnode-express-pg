@@ -2,9 +2,9 @@ interface UserMeta {
   password: string
 }
 
-interface UserBase {
+export interface UserBase {
   email: string
-  meta: UserMeta
+  meta?: UserMeta
   username: string
   firstName: string
   lastName: string
@@ -12,5 +12,4 @@ interface UserBase {
 
 export interface User extends UserBase {
   id: number
-
 }
