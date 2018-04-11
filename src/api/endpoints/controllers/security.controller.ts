@@ -1,23 +1,18 @@
 import * as helpers from '../helpers/security.helpers'
-import { encryptPassword } from '../../utils/security.utils'
-import { Registration } from '../models/security.models'
-import {
-  RequestHandler,
-  OnEncryptionError,
-  OnEncryptionSuccess,
-} from '../../models'
+import { Registration, Login, UserSession } from '../models'
+import { User } from '../models'
+import { AppRequest } from '../../models'
 
-export const register: RequestHandler = (req, res, next) => {
-  const registration: Registration = req.body
+export const register = (request: AppRequest): Promise<User> => {
+  const registration: Registration = request.body
   const { password, email, firstName, lastName, username } = registration
 
-  const onEncryptSuccess: OnEncryptionSuccess = (encryption, salt) => {
-    console.log(password, email, firstName, lastName, username, helpers)
-  }
+  return helpers.register(request, password, email, firstName, lastName, username)
+}
 
-  const onEncryptError: OnEncryptionError = (error) => {
-    next(error)
-  }
+export const login = (request: AppRequest): Promise<UserSession> => {
+  const loginCreds: Login = request.body
+  const { email, password } = loginCreds
 
-  encryptPassword(password, onEncryptSuccess, onEncryptError)
+  return helpers.login(request, email, password)
 }

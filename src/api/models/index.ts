@@ -18,7 +18,7 @@ import {
  */
 export type Db = IDatabase<{}>
 export type TQueryFunc = () => TQuery
-export type QueryValues = (string | number)[] | Record<string, (string | number)>
+export type QueryValues = (string | number | Date)[] | Record<string, (string | number | Date)>
 export interface QueryObj {
   sql: TQuery
   values?: QueryValues
@@ -41,9 +41,9 @@ export interface AppRequest extends Request {
  * Helper Models
  */
 
-export type OnEncryptionSuccess = (encrypted: string, salt: string) => void
+export type OnEncryptionSuccess<R> = (encrypted: string, salt: string) => R
 export type OnEncryptionError = (err: Error) => void
-export type OnVerifySuccess = (match: boolean) => void
+export type OnVerifySuccess = <R>(match: boolean) => R
 export type OnVerifyError = (err: Error) => void
 
 export {

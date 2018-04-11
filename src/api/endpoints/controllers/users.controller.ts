@@ -1,5 +1,5 @@
-import * as helpers from '../helpers/user.helpers'
-import { User } from '../models/user.models'
+import * as helpers from '../helpers/users.helpers'
+import { User } from '../models'
 import { AppRequest } from '../../models'
 
 export const getAllUsers = (request: AppRequest): Promise<User[]> => {

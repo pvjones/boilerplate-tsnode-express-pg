@@ -2,26 +2,21 @@ import { AppRequest } from '../../models'
 import * as sql from '../sql/users.sql'
 
 export const getAllUsers = <R>(request: AppRequest): Promise<R[]> => {
-  const get = sql.getAllUsers()
-  return request.utils.db.many<R>(
-    get.sql,
-  )
+  const query = sql.getAllUsers()
+  return request.utils.db.many<R>(query.sql)
 }
 
 export const getUser = <R>(request: AppRequest, userId: number): Promise<R> => {
   console.log('userId', userId)
-  const get = sql.getUser(userId)
-  return request.utils.db.one<R>(
-    get.sql,
-    get.values,
-  )
+  const query = sql.getUser(userId)
+  return request.utils.db.one<R>(query.sql, query.values)
 }
 
 export const updateUser = async <R>(request: AppRequest, userId: number, username: string, firstName: string, lastName: string): Promise<R> => {
-  const update = sql.updateUser(userId, firstName, lastName, username)
-  const updatedId = await request.utils.db.one<number>(
-    update.sql,
-    update.values,
+  const query = sql.updateUser(userId, firstName, lastName, username)
+  const updatedId: number = await request.utils.db.one<number>(
+    query.sql,
+    query.values,
     u => u.id,
   )
 
@@ -29,10 +24,10 @@ export const updateUser = async <R>(request: AppRequest, userId: number, usernam
 }
 
 export const createUser = async <R>(request: AppRequest, email: string, meta: any, username: string, firstName: string, lastName: string): Promise<R> => {
-  const create = sql.createUser(email, meta, username, firstName, lastName)
+  const query = sql.createUser(email, meta, username, firstName, lastName)
   const createdId = await request.utils.db.one<number>(
-    create.sql,
-    create.values,
+    query.sql,
+    query.values,
     u => u.id,
   )
 
@@ -40,9 +35,6 @@ export const createUser = async <R>(request: AppRequest, email: string, meta: an
 }
 
 export const deleteUser = async (request: AppRequest, userId: number) => {
-  const del = sql.deleteUser(userId)
-  return request.utils.db.none(
-    del.sql,
-    del.values,
-  )
+  const query = sql.deleteUser(userId)
+  return request.utils.db.none(query.sql, query.values)
 }

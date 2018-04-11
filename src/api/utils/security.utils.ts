@@ -1,10 +1,6 @@
 import * as crypto from 'crypto'
-import {
-  OnEncryptionError,
-  OnEncryptionSuccess,
-  OnVerifyError,
-  OnVerifySuccess,
-} from '../models'
+import * as uuid from 'uuid'
+import { Credentials, Session, UserSession, UserCredentials } from '../endpoints/models'
 
 const passwordLength = 256
 const saltLength = 32
@@ -15,25 +11,44 @@ const bufferToHex = (key: any): string => {
   return key.toString('hex')
 }
 
-export const encryptPassword = (password: string, onSuccess: OnEncryptionSuccess, onError: OnEncryptionError): void => {
-  crypto.randomBytes(saltLength, (err, salt) => {
-    if (err) { onError(err) }
-    const hexSalt = bufferToHex(salt)
+export const encryptPassword = (password: string): Promise<Credentials> => {
+  return new Promise((resolve, reject) => {
+    crypto.randomBytes(saltLength, (err, salt) => {
+      if (err) { reject(err) }
+      const hexSalt = bufferToHex(salt)
 
-    crypto.pbkdf2(password, hexSalt, iterations, passwordLength, digest, (err, derivedKey) => {
-      if (err) { onError(err) }
-      const hexKey = bufferToHex(derivedKey)
+      return crypto.pbkdf2(password, hexSalt, iterations, passwordLength, digest, (err, derivedKey) => {
+        if (err) { reject(err) }
+        const hexKey = bufferToHex(derivedKey)
 
-      onSuccess(hexKey, hexSalt)
+        resolve({
+          cryptic: hexKey,
+          salt: hexSalt,
+        })
+      })
     })
   })
 }
 
-export const verifyPassword = (password: string, currentPassword: string, salt: string, onSuccess: OnVerifySuccess, onError: OnVerifyError): void => {
-  crypto.pbkdf2(password, salt, iterations, passwordLength, digest, (err, derivedKey) => {
-    if (err) { onError(err) }
-    const result = bufferToHex(derivedKey) === currentPassword
+export const verifyPassword = (password: string, cryptic: string, salt: string): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, salt, iterations, passwordLength, digest, (err, derivedKey) => {
+      if (err) { reject(err) }
+      const result = bufferToHex(derivedKey) === cryptic
 
-    onSuccess(result)
+      resolve(result)
+    })
   })
+}
+
+export const generateToken = (): string => uuid()
+
+export const transformSession = (session: Session, user: UserCredentials): UserSession => {
+  const { token } = session
+  const { username, email, firstName, lastName, id } = user
+
+  return {
+    token,
+    user: { id, username, email, firstName, lastName }
+  }
 }

@@ -28,6 +28,7 @@ const configureApp: AppModifier = app => {
 
 const registerRoutes: AppModifier = app => {
   app.use(express.static(path.join(__dirname, 'public')))
+
   routes(app)
 
   return app

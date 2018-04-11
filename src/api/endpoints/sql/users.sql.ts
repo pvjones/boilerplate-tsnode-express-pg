@@ -1,37 +1,37 @@
-import { QueryObj } from '../../models'
+import { Query } from '../../utils/query.utils'
 
-export const getAllUsers = (): QueryObj => {
+export const getAllUsers = (): Query => {
   const sql = `
         SELECT
           id,
           email,
           username,
-          first_name AS firstName,
-          last_name AS lastName
+          first_name AS "firstName",
+          last_name AS "lastName"
         FROM users
       `
-  return { sql }
+  return new Query(sql)
 }
 
 
-export const getUser = (userId: number): QueryObj => {
+export const getUser = (userId: number): Query => {
   const sql = `
     SELECT
       id,
       email,
       username,
-      first_name AS firstName,
-      last_name AS lastName
+      first_name AS "firstName",
+      last_name AS "lastName"
     FROM users
     WHERE
       id = $/userId/
   `
   const values = { userId }
 
-  return { sql, values }
+  return new Query(sql, values)
 }
 
-export const updateUser = (userId: number, firstName: string, lastName: string, username: string): QueryObj => {
+export const updateUser = (userId: number, firstName: string, lastName: string, username: string): Query => {
   const sql = `
       UPDATE users
       SET
@@ -45,10 +45,10 @@ export const updateUser = (userId: number, firstName: string, lastName: string, 
     `
   const values = { userId, firstName, lastName, username }
 
-  return { sql, values }
+  return new Query(sql, values)
 }
 
-export const createUser = (email: string, meta: any, username: string, firstName: string, lastName: any): QueryObj => {
+export const createUser = (email: string, meta: any, username: string, firstName: string, lastName: any): Query => {
   const sql = `
       INSERT INTO users (
         email,
@@ -69,15 +69,15 @@ export const createUser = (email: string, meta: any, username: string, firstName
     `
   const values = { email, meta, username, firstName, lastName }
 
-  return { sql, values }
+  return new Query(sql, values)
 }
 
-export const deleteUser = (userId: number): QueryObj => {
+export const deleteUser = (userId: number): Query => {
   const sql = `
     DELETE FROM users
     WHERE id = $/userId/
   `
   const values = { userId }
 
-  return { sql, values }
+  return new Query(sql, values)
 }
