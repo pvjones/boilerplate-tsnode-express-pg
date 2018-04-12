@@ -1,0 +1,27 @@
+{
+  // Use IntelliSense to learn about possible Node.js debug attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "protocol": "auto",
+      "name": "DEBUG API",
+      "args": [],
+      "cwd": "${workspaceFolder}/dist/api",
+      "program": "${workspaceFolder}/src/api/api.ts",
+      "console": "internalConsole",
+      "env": {
+        "NODE_ENV": "development",
+      },
+      "outFiles": [
+        "${workspaceFolder}/dist/api/**/*.js"
+      ],
+      "sourceMaps": true,
+      "stopOnEntry": false,
+      "port": 3000
+    }
+  ]
+}

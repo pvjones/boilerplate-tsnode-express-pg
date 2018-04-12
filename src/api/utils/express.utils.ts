@@ -1,9 +1,12 @@
 import getDb from '../../db/db'
+import { getToken } from '../utils/security.utils'
+import { getSessionByToken } from '../endpoints/helpers/security.helpers'
 import {
   HandlePromise,
   ErrorRequestHandler,
   RequestHandler,
   Db,
+  AppRequest,
 } from '../models'
 
 export const handlePromise: HandlePromise = (promise, res, next) => {
@@ -21,10 +24,6 @@ export const handleError: ErrorRequestHandler = (err, req, res, next) => {
   res.json({ message: err.message })
 }
 
-export const handleAuth: RequestHandler = async (req, res, next) => {
-
-}
-
 export const handleRequest = (controller: any): RequestHandler =>
   (req, res, next) => {
     const promise = controller(req)
@@ -32,3 +31,16 @@ export const handleRequest = (controller: any): RequestHandler =>
   }
 
 export const buildUtils = (): { db: Db } => ({ db: getDb() })
+
+export const isAuthenticated: RequestHandler = (req: AppRequest, res, next) => {
+  const token = getToken(req.headers)
+  Promise.resolve(getSessionByToken(req, token))
+    .then(session => {
+      if (!session) throw new Error('Session invalid')
+      if (session.expiresAt < new Date()) throw new Error('Session expired')
+
+      req.userId = session.userId
+      return next()
+    })
+    .catch((error: Error) => next(error))
+}

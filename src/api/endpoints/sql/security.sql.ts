@@ -81,3 +81,24 @@ export const getSessionById = (sessionId: number): Query => {
 
   return new Query(sql, values)
 }
+
+export const getSessionByToken = (token: string): Query => {
+  const sql = `
+    SELECT *
+    FROM sessions
+    WHERE token = $/token/
+  `
+  const values = { token }
+
+  return new Query(sql, values)
+}
+
+export const deleteSessionByToken = (token: string): Query => {
+  const sql = `
+    DELETE FROM sessions
+    WHERE token = $/token/
+  `
+  const values = { token }
+
+  return new Query(sql, values)
+}

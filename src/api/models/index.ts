@@ -35,6 +35,7 @@ export interface RequestUtils {
 }
 export interface AppRequest extends Request {
   utils: RequestUtils
+  userId?: number
 }
 
 /** 

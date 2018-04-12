@@ -52,3 +52,14 @@ export const transformSession = (session: Session, user: UserCredentials): UserS
     user: { id, username, email, firstName, lastName }
   }
 }
+
+export const getToken = (headers: any): string => {
+  const auth = headers['authorization']
+  if (auth) {
+    const tokens = auth.split(' ')
+    if (tokens.length > 1) {
+      return tokens[1]
+    }
+  }
+  return ''
+}
