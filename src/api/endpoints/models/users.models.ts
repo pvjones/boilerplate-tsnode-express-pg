@@ -1,6 +1,4 @@
-interface UserMeta {
-  password: string
-}
+export type UserMeta = Record<string, any>
 
 export interface UserBase {
   email: string

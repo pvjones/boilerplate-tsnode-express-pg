@@ -18,7 +18,7 @@ import {
  */
 export type Db = IDatabase<{}>
 export type TQueryFunc = () => TQuery
-export type QueryValues = (string | number | Date)[] | Record<string, (string | number | Date)>
+export type QueryValues = (string | number | Date | Record<string, any>)[] | Record<string, (string | number | Date | Record<string, any>)>
 export interface QueryObj {
   sql: TQuery
   values?: QueryValues

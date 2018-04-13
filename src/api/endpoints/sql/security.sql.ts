@@ -1,33 +1,46 @@
 import { Query } from '../../utils/query.utils'
+import { UserMeta } from '../models'
 
-export const register = (email: string, username: string, firstName: string, lastName: string, cryptic: string, salt: string): Query => {
+export const register = (hash: string, salt: string, email: string, username: string, firstName: string, lastName: string, meta: UserMeta): Query => {
   const sql = `
-    INSERT INTO users (
-      email, 
-      username,
-      first_name, 
-      last_name, 
-      meta
-    ) 
-    VALUES (
-      $/email/, 
-      $/username/, 
-      $/firstName/, 
-      $/lastName/, 
-      $/meta/
-    ) 
-    RETURNING 
-      email, 
-      username, 
-      first_name AS "firstName", 
-      last_name AS "lastName"
+    WITH 
+      UsersCTE AS (
+        INSERT INTO users (
+          email,
+          username,
+          first_name,
+          last_name,
+          meta
+        ) VALUES (
+          $/email/, 
+          $/username/, 
+          $/firstName/, 
+          $/lastName/, 
+          $/meta/
+        )
+        RETURNING *
+      ), 
+      SecurityCTE AS (
+        INSERT INTO security (
+          user_id,
+          hash,
+          salt
+        ) VALUES (
+          (SELECT id FROM UsersCTE),
+          $/hash/,
+          $/salt/
+        )
+      )
+    SELECT * FROM UsersCTE
   `
   const values = {
     email,
     username,
     firstName,
     lastName,
-    meta: JSON.stringify({ cryptic, salt }),
+    hash,
+    salt,
+    meta,
   }
 
   return new Query(sql, values)
@@ -36,15 +49,13 @@ export const register = (email: string, username: string, firstName: string, las
 export const getCreds = (email: string): Query => {
   const sql = `
     SELECT
-      id,
-      meta->>'cryptic' AS cryptic,
-      meta->>'salt' AS salt,
-      email,
-      username,
-      first_name AS "firstName",
-      last_name AS "lastName"
-    FROM users
-    WHERE email = $/email/
+      user_id AS "userId",
+      hash,
+      salt
+    FROM security s 
+    INNER JOIN users u 
+      ON (s.user_id = u.id)
+    WHERE u.email = $/email/
   `
   const values = { email }
 
@@ -53,18 +64,31 @@ export const getCreds = (email: string): Query => {
 
 export const createSession = (userId: number, token: string, expiresAt: Date): Query => {
   const sql = `
-    INSERT INTO sessions (
-      user_id,
-      token,
-      expires_at
-    )
-    VALUES (
-      $/userId/,
-      $/token/,
-      $/expiresAt/
-    )
-    RETURNING
-      id
+    WITH
+      SessionsCTE AS (
+        INSERT INTO sessions (
+          user_id,
+          token,
+          expires_at
+        ) VALUES (
+          $/userId/,
+          $/token/,
+          $/expiresAt/
+        )
+        RETURNING *
+      )
+    SELECT
+      u.id,
+      u.username,
+      u.email,
+      u.first_name AS "firstName",
+      u.last_name AS "lastName",
+      u.meta,
+      s.token,
+      s.expires_at AS "expiresAt"
+    FROM SessionsCTE s
+    INNER JOIN users u 
+      ON (s.user_id = u.id)
   `
   const values = { userId, token, expiresAt }
 

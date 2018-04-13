@@ -7,28 +7,27 @@ import {
   getToken,
 } from '../../utils/security.utils'
 import { AppRequest } from '../../models'
-import { UserCredentials, Session, UserSession } from '../models/security.models'
-import { User } from '../models/users.models'
+import { Session, UserSession, Credentials, SessionObject } from '../models/security.models'
+import { User, UserMeta } from '../models/users.models'
 
-export const register = async (request: AppRequest, password: string, email: string, firstName: string, lastName: string, username: string): Promise<User> => {
-  const creds = await encryptPassword(password)
-  const { cryptic, salt } = creds
+export const register = async (request: AppRequest, password: string, email: string, firstName: string, lastName: string, username: string, meta: UserMeta = {}): Promise<User> => {
+  const { hash, salt } = await encryptPassword(password)
 
-  const query = sql.register(email, username, firstName, lastName, cryptic, salt)
+  const query = sql.register(hash, salt, email, username, firstName, lastName, meta)
   return request.utils.db.one<User>(query.sql, query.values)
 }
 
-export const login = async (request: AppRequest, email: string, password: string): Promise<UserSession> => {
+export const login = async (request: AppRequest, email: string, password: string): Promise<SessionObject> => {
   const query = sql.getCreds(email)
-  const dbCreds = await request.utils.db.one<UserCredentials>(query.sql, query.values)
+  const { hash, salt, userId } = await request.utils.db.oneOrNone<Credentials>(query.sql, query.values)
 
-  const isVerified = await verifyPassword(password, dbCreds.cryptic, dbCreds.salt)
+  if (!hash || !salt) throw new Error('User not found')
+
+  const isVerified = await verifyPassword(password, hash, salt)
   if (!isVerified) throw new Error('Email and password combination do not match')
 
-  const sessionId = await createSession(request, dbCreds.id)
-  const session = await getSessionById(request, sessionId)
-
-  return transformSession(session, dbCreds)
+  const session = await createSession(request, userId)
+  return transformSession(session)
 }
 
 export const logout = async (request: AppRequest): Promise<void> => {
@@ -36,14 +35,14 @@ export const logout = async (request: AppRequest): Promise<void> => {
   return deleteSessionByToken(request, token)
 }
 
-export const createSession = async (request: AppRequest, userId: number): Promise<number> => {
+export const createSession = async (request: AppRequest, userId: number): Promise<UserSession> => {
   const token = generateToken()
 
   const expiry = new Date()
   expiry.setDate(expiry.getDate() + 1)
 
   const query = sql.createSession(userId, token, expiry)
-  return request.utils.db.one<number>(query.sql, query.values, v => v.id)
+  return request.utils.db.one<UserSession>(query.sql, query.values)
 }
 
 export const getSessionById = async (request: AppRequest, userId: number): Promise<Session> => {

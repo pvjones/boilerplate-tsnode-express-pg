@@ -1,6 +1,6 @@
 import * as crypto from 'crypto'
 import * as uuid from 'uuid'
-import { Credentials, Session, UserSession, UserCredentials } from '../endpoints/models'
+import { CredentialsBase, SessionObject, UserSession } from '../endpoints/models'
 
 // Match output bytes to the native output of hash function 
 // -- attackers only have to match the first x # of bytes
@@ -13,7 +13,7 @@ const bufferToHex = (buffer: Buffer): string => {
   return buffer.toString('hex')
 }
 
-export const encryptPassword = (password: string): Promise<Credentials> => {
+export const encryptPassword = (password: string): Promise<CredentialsBase> => {
   return new Promise((resolve, reject) => {
     crypto.randomBytes(saltBytes, (err, salt) => {
       if (err) { reject(err) }
@@ -24,7 +24,7 @@ export const encryptPassword = (password: string): Promise<Credentials> => {
         const hexKey = bufferToHex(derivedKey)
 
         resolve({
-          cryptic: hexKey,
+          hash: hexKey,
           salt: hexSalt,
         })
       })
@@ -45,12 +45,11 @@ export const verifyPassword = (password: string, cryptic: string, salt: string):
 
 export const generateToken = (): string => uuid()
 
-export const transformSession = (session: Session, user: UserCredentials): UserSession => {
-  const { token } = session
-  const { username, email, firstName, lastName, id } = user
+export const transformSession = (session: UserSession): SessionObject => {
+  const { id, username, email, firstName, lastName, token, expiresAt } = session
 
   return {
-    token,
+    session: { token, expiresAt },
     user: { id, username, email, firstName, lastName }
   }
 }

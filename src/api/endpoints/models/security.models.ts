@@ -1,12 +1,5 @@
 import { UserBase, User } from '../models/users.models'
 
-export interface Session {
-  id: number
-  userId: number
-  token: string
-  createdAt: Date
-  expiresAt: Date
-}
 
 export interface Registration extends UserBase {
   password: string
@@ -17,14 +10,29 @@ export interface Login {
   password: string
 }
 
-export interface Credentials {
-  cryptic: string,
+export interface CredentialsBase {
+  hash: string
   salt: string
 }
 
-export interface UserCredentials extends User, Credentials { }
+export interface Credentials extends CredentialsBase {
+  userId: number
+}
 
-export interface UserSession {
+export interface SessionBase {
   token: string
+  expiresAt: Date
+}
+
+export interface Session extends SessionBase {
+  id: number
+  userId: number
+  createdAt: Date
+}
+
+export interface UserSession extends User, Session { }
+
+export interface SessionObject {
+  session: SessionBase
   user: User
 }

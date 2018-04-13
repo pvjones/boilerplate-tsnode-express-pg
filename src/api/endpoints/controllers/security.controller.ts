@@ -1,5 +1,5 @@
 import * as helpers from '../helpers/security.helpers'
-import { User, Registration, Login, UserSession } from '../models'
+import { User, Registration, Login, SessionObject } from '../models'
 import { AppRequest } from '../../models'
 
 export const register = (request: AppRequest): Promise<User> => {
@@ -9,7 +9,7 @@ export const register = (request: AppRequest): Promise<User> => {
   return helpers.register(request, password, email, firstName, lastName, username)
 }
 
-export const login = (request: AppRequest): Promise<UserSession> => {
+export const login = (request: AppRequest): Promise<SessionObject> => {
   const loginCreds: Login = request.body
   const { email, password } = loginCreds
 
