@@ -2,7 +2,7 @@ import { TQueryFunc } from '../../api/models'
 
 const createUsers: TQueryFunc = () => `
   CREATE TABLE IF NOT EXISTS users (
-    id bigserial PRIMARY KEY,
+    id serial PRIMARY KEY,
     email text UNIQUE NOT NULL,
     meta json NOT NULL,
     username text,
@@ -13,14 +13,18 @@ const createUsers: TQueryFunc = () => `
 
 const createSecurity: TQueryFunc = () => `
   CREATE TABLE IF NOT EXISTS security (
-    id bigserial PRIMARY KEY
+    id serial PRIMARY KEY,
+    user_id integer NOT NULL,
+    hash text NOT NULL,
+    salt text NOT NULL,
+    foreign key (user_id) references users (id)
   )
 `
 
 const createSessions: TQueryFunc = () => `
   CREATE TABLE IF NOT EXISTS sessions (
-    id bigserial PRIMARY KEY,
-    user_id bigint NOT NULL,
+    id serial PRIMARY KEY,
+    user_id integer NOT NULL,
     token text NOT NULL,
     created_at timestamp NOT NULL DEFAULT now(),
     expires_at timestamp NOT NULL,

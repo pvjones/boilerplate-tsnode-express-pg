@@ -30,7 +30,10 @@ export const handleRequest = (controller: any): RequestHandler =>
     handlePromise(promise, res, next)
   }
 
-export const buildUtils = (): { db: Db } => ({ db: getDb() })
+export const buildUtils = async (): Promise<{ db: Db }> => {
+  const db = await getDb()
+  return { db }
+}
 
 export const isAuthenticated: RequestHandler = (req: AppRequest, res, next) => {
   const token = getToken(req.headers)

@@ -14,18 +14,16 @@ const config: TConfig = {
 }
 
 const initTables = async (_db: Db): Promise<void> => {
-  const promises = Object.keys(init).map(key => {
-    const statement = init[key]
-    return _db.none(statement())
+  Object.keys(init).map(async key => {
+    const promise = await _db.none(init[key]())
+    return promise
   })
-
-  Promise.all(promises)
 }
 
-const getDb = (): Db => {
+const getDb = async (): Promise<Db> => {
   const pgp: IMain = pgPromise()
   const db = <Db>pgp(config)
-  initTables(db)
+  await initTables(db)
   return db
 }
 

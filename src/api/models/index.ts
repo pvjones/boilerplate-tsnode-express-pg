@@ -29,7 +29,9 @@ export interface QueryObj {
  */
 export type HandlePromise = (promise: Promise<any>, res: Response, next: NextFunction) => void
 export type AppModifier = (app: Application) => Application
+export type AsyncAppModifier = (app: Application) => Promise<Application>
 export type AppGenerator = () => Application
+export type AsyncAppGenerator = () => Promise<Application>
 export interface RequestUtils {
   db: Db
 }

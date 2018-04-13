@@ -3,7 +3,7 @@ import * as bodyParser from 'body-parser'
 import * as path from 'path'
 import routes from './endpoints/routes'
 import { handleError, buildUtils } from './utils/express.utils'
-import { AppGenerator, AppModifier, AppRequest } from './models'
+import { AppGenerator, AsyncAppGenerator, AppModifier, AsyncAppModifier, AppRequest } from './models'
 
 const cors = require('cors')
 
@@ -34,8 +34,8 @@ const registerRoutes: AppModifier = app => {
   return app
 }
 
-const injectUtils: AppModifier = app => {
-  const utils = buildUtils()
+const injectUtils: AsyncAppModifier = async app => {
+  const utils = await buildUtils()
 
   app.use((req: AppRequest, res, next) => {
     req.utils = utils
@@ -56,10 +56,10 @@ const handleErrors: AppModifier = app => {
   return app
 }
 
-const start: AppGenerator = () => {
+const start: AsyncAppGenerator = async () => {
   let server = createServer()
   server = configureApp(server)
-  server = injectUtils(server)
+  server = await injectUtils(server)
   server = registerRoutes(server)
   server = handleErrors(server)
 
