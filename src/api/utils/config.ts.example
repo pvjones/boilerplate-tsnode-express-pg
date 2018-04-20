@@ -1,0 +1,40 @@
+import { Config, EnvConfig, EnvKeys } from '../models'
+
+const config: Config = {
+
+  dev: {
+    db: {
+      host: 'localhost',
+      port: 5432,
+      database: 'master',
+      user: '',
+      password: '',
+    },
+    api: {
+      jwtSecret: '',
+      baseUrl: 'api',
+      port: 3000,
+    }
+  },
+
+  prod: {
+    db: {
+      host: 'localhost',
+      port: 5432,
+      database: 'master',
+      user: '',
+      password: '',
+    },
+    api: {
+      jwtSecret: '',
+      baseUrl: 'api',
+      port: 3000,
+    }
+  }
+
+}
+
+export default (env: EnvKeys): EnvConfig => {
+  const envType = (env || process.env.ENV || 'dev') as EnvKeys
+  return config[envType]
+}

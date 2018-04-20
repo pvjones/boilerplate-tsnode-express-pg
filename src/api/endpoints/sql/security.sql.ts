@@ -62,18 +62,16 @@ export const getCreds = (email: string): Query => {
   return new Query(sql, values)
 }
 
-export const createSession = (userId: number, token: string, expiresAt: Date): Query => {
+export const createSession = (userId: number, uuid: string): Query => {
   const sql = `
     WITH
       SessionsCTE AS (
         INSERT INTO sessions (
           user_id,
-          token,
-          expires_at
+          uuid
         ) VALUES (
           $/userId/,
-          $/token/,
-          $/expiresAt/
+          $/uuid/
         )
         RETURNING *
       )
@@ -84,13 +82,13 @@ export const createSession = (userId: number, token: string, expiresAt: Date): Q
       u.first_name AS "firstName",
       u.last_name AS "lastName",
       u.meta,
-      s.token,
-      s.expires_at AS "expiresAt"
+      s.uuid,
+      s.created_at AS "createdAt"
     FROM SessionsCTE s
     INNER JOIN users u 
       ON (s.user_id = u.id)
   `
-  const values = { userId, token, expiresAt }
+  const values = { userId, uuid }
 
   return new Query(sql, values)
 }
@@ -106,23 +104,24 @@ export const getSessionById = (sessionId: number): Query => {
   return new Query(sql, values)
 }
 
-export const getSessionByToken = (token: string): Query => {
+export const getSessionByUuid = (uuid: string): Query => {
   const sql = `
     SELECT *
     FROM sessions
-    WHERE token = $/token/
+    WHERE uuid = $/uuid/
   `
-  const values = { token }
+  const values = { uuid }
 
   return new Query(sql, values)
 }
 
-export const deleteSessionByToken = (token: string): Query => {
+export const deleteSessionByUuid = (uuid: string): Query => {
   const sql = `
     DELETE FROM sessions
-    WHERE token = $/token/
+    WHERE uuid = $/uuid/
+    RETURNING id
   `
-  const values = { token }
+  const values = { uuid }
 
   return new Query(sql, values)
 }

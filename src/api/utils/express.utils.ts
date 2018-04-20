@@ -1,6 +1,6 @@
 import getDb from '../../db/db'
-import { getToken } from '../utils/security.utils'
-import { getSessionByToken } from '../endpoints/helpers/security.helpers'
+import { parseToken } from '../utils/security.utils'
+import { getSessionByUuid } from '../endpoints/helpers/security.helpers'
 import {
   HandlePromise,
   ErrorRequestHandler,
@@ -20,8 +20,11 @@ export const handlePromise: HandlePromise = (promise, res, next) => {
 }
 
 export const handleError: ErrorRequestHandler = (err, req, res, next) => {
-  console.error(err.message)
-  res.json({ message: err.message })
+  const message = err.message
+
+  message
+    ? res.status(400).end(JSON.stringify({ message }))
+    : res.status(400).end()
 }
 
 export const handleRequest = (controller: any): RequestHandler =>
@@ -36,11 +39,16 @@ export const buildUtils = async (): Promise<{ db: Db }> => {
 }
 
 export const isAuthenticated: RequestHandler = (req: AppRequest, res, next) => {
-  const token = getToken(req.headers)
-  Promise.resolve(getSessionByToken(req, token))
+  const token = req.headers && req.headers.authorization
+  const { uuid, createdAt } = parseToken(token)
+
+  const expiry = createdAt
+  expiry.setDate(expiry.getDate() - 1)
+
+  Promise.resolve(getSessionByUuid(req, uuid))
     .then(session => {
       if (!session) throw new Error('Session invalid')
-      if (session.expiresAt < new Date()) throw new Error('Session expired')
+      if (expiry < new Date()) throw new Error('Session expired')
 
       req.userId = session.userId
       return next()

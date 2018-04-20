@@ -49,6 +49,32 @@ export type OnEncryptionError = (err: Error) => void
 export type OnVerifySuccess = <R>(match: boolean) => R
 export type OnVerifyError = (err: Error) => void
 
+/**
+ * Config Models
+ */
+
+interface DbConfig {
+  host: string
+  port: number
+  database: string
+  user: string
+  password: string
+}
+
+interface ApiConfig {
+  jwtSecret: string
+  baseUrl: string
+  port: number
+}
+
+export interface EnvConfig {
+  db: DbConfig
+  api: ApiConfig
+}
+
+export type EnvKeys = 'dev' | 'prod'
+export type Config = Record<EnvKeys, EnvConfig>
+
 export {
   Application,
   ErrorRequestHandler,

@@ -20,19 +20,18 @@ export interface Credentials extends CredentialsBase {
 }
 
 export interface SessionBase {
-  token: string
-  expiresAt: Date
+  uuid: string
+  createdAt: Date
 }
 
 export interface Session extends SessionBase {
   id: number
   userId: number
-  createdAt: Date
 }
 
 export interface UserSession extends User, Session { }
 
 export interface SessionObject {
-  session: SessionBase
+  token: string
   user: User
 }

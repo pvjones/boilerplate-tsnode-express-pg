@@ -2,9 +2,9 @@ import * as sql from '../sql/security.sql'
 import {
   encryptPassword,
   verifyPassword,
-  generateToken,
+  getUuid,
   transformSession,
-  getToken,
+  parseToken,
 } from '../../utils/security.utils'
 import { AppRequest } from '../../models'
 import { Session, UserSession, Credentials, SessionObject } from '../models/security.models'
@@ -19,8 +19,9 @@ export const register = async (request: AppRequest, password: string, email: str
 
 export const login = async (request: AppRequest, email: string, password: string): Promise<SessionObject> => {
   const query = sql.getCreds(email)
-  const { hash, salt, userId } = await request.utils.db.oneOrNone<Credentials>(query.sql, query.values)
+  const creds = await request.utils.db.oneOrNone<Credentials>(query.sql, query.values)
 
+  const { hash = '', salt = '', userId = null } = creds || {}
   if (!hash || !salt) throw new Error('User not found')
 
   const isVerified = await verifyPassword(password, hash, salt)
@@ -28,20 +29,21 @@ export const login = async (request: AppRequest, email: string, password: string
 
   const session = await createSession(request, userId)
   return transformSession(session)
+
 }
 
 export const logout = async (request: AppRequest): Promise<void> => {
-  const token = getToken(request.headers)
-  return deleteSessionByToken(request, token)
+  const { authorization } = request.headers
+  const parsed = parseToken(authorization)
+  const { uuid } = parsed
+  return deleteSessionByUuid(request, uuid)
 }
 
 export const createSession = async (request: AppRequest, userId: number): Promise<UserSession> => {
-  const token = generateToken()
+  // const expiry = new Date()
+  // expiry.setDate(expiry.getDate() + 1)
 
-  const expiry = new Date()
-  expiry.setDate(expiry.getDate() + 1)
-
-  const query = sql.createSession(userId, token, expiry)
+  const query = sql.createSession(userId, getUuid())
   return request.utils.db.one<UserSession>(query.sql, query.values)
 }
 
@@ -50,12 +52,12 @@ export const getSessionById = async (request: AppRequest, userId: number): Promi
   return request.utils.db.one<Session>(query.sql, query.values)
 }
 
-export const getSessionByToken = (request: AppRequest, token: string): Promise<Session> => {
-  const query = sql.getSessionByToken(token)
+export const getSessionByUuid = (request: AppRequest, uuid: string): Promise<Session> => {
+  const query = sql.getSessionByUuid(uuid)
   return request.utils.db.oneOrNone<Session>(query.sql, query.values)
 }
 
-export const deleteSessionByToken = (request: AppRequest, token: string): Promise<void> => {
-  const query = sql.deleteSessionByToken(token)
+export const deleteSessionByUuid = (request: AppRequest, uuid: string): Promise<void> => {
+  const query = sql.deleteSessionByUuid(uuid)
   return request.utils.db.one(query.sql, query.values)
 }

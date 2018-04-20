@@ -3,6 +3,7 @@ import * as bodyParser from 'body-parser'
 import * as path from 'path'
 import routes from './endpoints/routes'
 import { handleError, buildUtils } from './utils/express.utils'
+import getConfig from './utils/config'
 import { AppGenerator, AsyncAppGenerator, AppModifier, AsyncAppModifier, AppRequest } from './models'
 
 const cors = require('cors')
@@ -48,7 +49,7 @@ const injectUtils: AsyncAppModifier = async app => {
 const handleErrors: AppModifier = app => {
   app.use((req, res, next) => {
     // No endpoint routes were matched
-    throw Error('not found')
+    throw new Error('not found')
   })
 
   app.use(handleError)
@@ -63,7 +64,7 @@ const start: AsyncAppGenerator = async () => {
   server = registerRoutes(server)
   server = handleErrors(server)
 
-  server.listen(3000, () => {
+  server.listen(getConfig().api.port, () => {
     console.log('Api is listening on port 3000')
   })
 

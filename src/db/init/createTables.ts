@@ -25,9 +25,8 @@ const createSessions: TQueryFunc = () => `
   CREATE TABLE IF NOT EXISTS sessions (
     id serial PRIMARY KEY,
     user_id integer NOT NULL,
-    token text NOT NULL,
+    uuid text NOT NULL,
     created_at timestamp NOT NULL DEFAULT now(),
-    expires_at timestamp NOT NULL,
     foreign key (user_id) references users (id)
   )
 `

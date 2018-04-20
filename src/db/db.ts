@@ -1,16 +1,20 @@
 import * as pgPromise from 'pg-promise'
 import init from './init/createTables'
+import getConfig from '../api/utils/config'
 import {
   Db,
   IMain,
   TConfig,
 } from '../api/models'
 
-const config: TConfig = {
-  host: 'localhost',
-  port: 5432,
-  database: 'master',
-  user: 'postgres',
+const config = getConfig()
+
+const dbConfig: TConfig = {
+  host: config.db.host,
+  port: config.db.port,
+  database: config.db.database,
+  user: config.db.user,
+  password: config.db.password,
 }
 
 const initTables = async (_db: Db): Promise<void> => {
@@ -22,7 +26,7 @@ const initTables = async (_db: Db): Promise<void> => {
 
 const getDb = async (): Promise<Db> => {
   const pgp: IMain = pgPromise()
-  const db = <Db>pgp(config)
+  const db = <Db>pgp(dbConfig)
   await initTables(db)
   return db
 }
